@@ -1,0 +1,23 @@
+# secrets
+.env
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# eval artifacts (raw responses + cache can be large; keep summaries only)
+results/raw/
+results/cache/
+results/*.html
+!results/.gitkeep
+
+# hf datasets cache
+data/hf_cache/
+
+# os
+.DS_Store
+Thumbs.db

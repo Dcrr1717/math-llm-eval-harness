@@ -1,0 +1,31 @@
+# Models under evaluation.
+#
+# `id` is the exact Anthropic model string. Prices are USD per 1,000,000 tokens
+# and are used only to turn the EXACT token counts returned by the API into a
+# dollar estimate — so the estimate is only as correct as these numbers.
+#
+# !!! VERIFY prices against https://www.anthropic.com/pricing before trusting the
+#     cost column. The token counts themselves are exact (from response.usage).
+#
+# Aliases (left column) are what you pass to `--models`, e.g. --models opus,haiku.
+
+opus:
+  id: claude-opus-5-5
+  label: "Claude Opus 5.5"
+  price_in_per_mtok: 5.00      # VERIFY
+  price_out_per_mtok: 25.00    # VERIFY
+  max_tokens: 4096
+
+sonnet:
+  id: claude-sonnet-5-5
+  label: "Claude Sonnet 5.5"
+  price_in_per_mtok: 3.00      # VERIFY
+  price_out_per_mtok: 15.00    # VERIFY
+  max_tokens: 4096
+
+haiku:
+  id: claude-haiku-5-5
+  label: "Claude Haiku 5.5"
+  price_in_per_mtok: 1.00      # VERIFY
+  price_out_per_mtok: 5.00     # VERIFY
+  max_tokens: 4096

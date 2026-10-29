@@ -1,0 +1,18 @@
+{"uid":"own/0001","topic":"algebra","problem":"Solve for x: 3x + 5 = 20. Give the value of x.","answer":"5","answer_type":"numeric"}
+{"uid":"own/0002","topic":"algebra","problem":"Solve for x: 2(x - 3) = 10. Give the value of x.","answer":"8","answer_type":"numeric"}
+{"uid":"own/0003","topic":"percentages","problem":"A sack of potatoes costs 25 dollars. If its price rises by 12%, what is the new price in dollars?","answer":"28","answer_type":"numeric"}
+{"uid":"own/0004","topic":"proportionality","problem":"If 3 hectares of corn yield 12 tons, how many tons would 8 hectares yield at the same rate?","answer":"32","answer_type":"numeric"}
+{"uid":"own/0005","topic":"geometry","problem":"A triangular plot has a base of 6 meters and a height of 9 meters. What is its area in square meters?","answer":"27","answer_type":"numeric"}
+{"uid":"own/0006","topic":"geometry","problem":"A rectangular pen is 5 meters wide and 8 meters long. What is its perimeter in meters?","answer":"26","answer_type":"numeric"}
+{"uid":"own/0007","topic":"systems","problem":"Two numbers satisfy x + y = 10 and x - y = 4. What is the value of x?","answer":"7","answer_type":"numeric"}
+{"uid":"own/0008","topic":"economics","problem":"A family has a monthly income of 500 dollars and spends 3/5 of it. How much does it save per month, in dollars?","answer":"200","answer_type":"numeric"}
+{"uid":"own/0009","topic":"arithmetic","problem":"240 plants are to be sown in rows of 15 plants each. How many complete rows are obtained?","answer":"16","answer_type":"numeric"}
+{"uid":"own/0010","topic":"percentages","problem":"After a 20% discount, a product costs 40 dollars. What was its original price in dollars?","answer":"50","answer_type":"numeric"}
+{"uid":"own/0011","topic":"algebra","problem":"If x is positive and x^2 = 49, what is the value of x?","answer":"7","answer_type":"numeric"}
+{"uid":"own/0012","topic":"interest","problem":"A principal of 1000 dollars earns simple interest of 5% per year for 2 years. What is the total interest earned, in dollars?","answer":"100","answer_type":"numeric"}
+{"uid":"own/0013","topic":"statistics","problem":"A student gets the grades 7, 8, and 9. What is the average?","answer":"8","answer_type":"numeric"}
+{"uid":"own/0014","topic":"proportionality","problem":"If 4 workers harvest a field in 6 days, in how many days would 8 workers harvest it at the same rate?","answer":"3","answer_type":"numeric"}
+{"uid":"own/0015","topic":"fractions","problem":"A cooperative harvests 3/4 of its planned 80 sacks. How many sacks did it harvest?","answer":"60","answer_type":"numeric"}
+{"uid":"own/0016","topic":"conversion","problem":"How many square meters are there in 2.5 hectares? (1 hectare = 10000 square meters)","answer":"25000","answer_type":"numeric"}
+{"uid":"own/0017","topic":"speed","problem":"A truck travels 180 kilometers in 3 hours at constant speed. What is its speed in kilometers per hour?","answer":"60","answer_type":"numeric"}
+{"uid":"own/0018","topic":"geometry","problem":"Express the area of a circle of radius 7 in terms of pi (leave the result as a function of pi).","answer":"49\\pi","answer_type":"expression"}
