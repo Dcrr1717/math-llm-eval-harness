@@ -162,6 +162,9 @@ def run(
                 raise
     except CostCapExceeded as e:
         print(f"\n[stop] {e}")
+        capped = e
+    else:
+        capped = None
     finally:
         writer.close()
 
@@ -170,4 +173,6 @@ def run(
         f"[done] graded={state['n']} acc={acc:.1%} "
         f"new-spend=${state['cost']:.2f} -> {raw_path}"
     )
+    if capped is not None:
+        raise capped
     return raw_path

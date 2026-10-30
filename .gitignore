@@ -9,11 +9,9 @@ venv/
 *.egg-info/
 .pytest_cache/
 
-# eval artifacts (raw responses + cache can be large; keep summaries only)
-results/raw/
+# eval artifacts: summary.json, dashboard.html and raw/*.jsonl are published;
+# the response cache is a local re-run aid only
 results/cache/
-results/*.html
-!results/.gitkeep
 
 # hf datasets cache
 data/hf_cache/

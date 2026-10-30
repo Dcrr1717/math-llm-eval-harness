@@ -69,6 +69,7 @@ tests/                  grading unit tests
 - Every run prints a running cost estimate and stops if `--max-cost` is exceeded:
   queued calls are cancelled, and only calls already in flight (at most
   `--concurrency`) finish. Their responses are cached, so a re-run records them free.
+  A capped run exits with status 2, so `&&` chains and `scripts/run_all.sh` stop.
 
 ## License
 
