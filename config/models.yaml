@@ -4,28 +4,33 @@
 # and are used only to turn the EXACT token counts returned by the API into a
 # dollar estimate — so the estimate is only as correct as these numbers.
 #
-# !!! VERIFY prices against https://www.anthropic.com/pricing before trusting the
-#     cost column. The token counts themselves are exact (from response.usage).
+# Prices verified 2026-10-30 against https://platform.claude.com/docs/en/about-claude/pricing
+# (base input / output, standard tier). Re-check before trusting the cost column if
+# that page changes. The token counts themselves are exact (from response.usage).
+#
+# Thinking is on by default for all three models and thinking tokens are billed as
+# output tokens; they also count toward `max_tokens`, so it is sized for thinking plus
+# the answer (a cap sized for the answer alone truncates replies).
 #
 # Aliases (left column) are what you pass to `--models`, e.g. --models opus,haiku.
 
 opus:
   id: claude-opus-5-5
   label: "Claude Opus 5.5"
-  price_in_per_mtok: 5.00      # VERIFY
-  price_out_per_mtok: 25.00    # VERIFY
-  max_tokens: 4096
+  price_in_per_mtok: 4.00
+  price_out_per_mtok: 20.00
+  max_tokens: 16000
 
 sonnet:
   id: claude-sonnet-5-5
   label: "Claude Sonnet 5.5"
-  price_in_per_mtok: 3.00      # VERIFY
-  price_out_per_mtok: 15.00    # VERIFY
-  max_tokens: 4096
+  price_in_per_mtok: 2.00
+  price_out_per_mtok: 10.00
+  max_tokens: 16000
 
 haiku:
   id: claude-haiku-5-5
   label: "Claude Haiku 5.5"
-  price_in_per_mtok: 1.00      # VERIFY
-  price_out_per_mtok: 5.00     # VERIFY
-  max_tokens: 4096
+  price_in_per_mtok: 0.10      # prompts <= 100K tokens; $0.50 above (never hit here)
+  price_out_per_mtok: 0.50     # prompts <= 100K tokens; $2.50 above
+  max_tokens: 16000
