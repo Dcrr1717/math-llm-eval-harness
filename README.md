@@ -21,8 +21,9 @@ compare model performance on structured reasoning tasks.
   numeric (float tolerance), and SymPy symbolic equivalence.
 - **Reporting.** Aggregates accuracy by model and by topic, total cost, mean latency,
   and writes a self-contained `dashboard.html`.
-- **Reproducible.** Deterministic defaults (`temperature=0`), on-disk response cache,
-  resumable runs, and every raw response saved as JSONL.
+- **Reproducible.** On-disk response cache, resumable runs, and every raw response
+  (with its `stop_reason`) saved as JSONL. Sampling is not configurable: API version
+  2026-10-21 rejects `temperature`/`top_p`/`top_k`, so repeat runs can differ.
 
 ## Quick start
 
@@ -60,11 +61,15 @@ tests/                  grading unit tests
 
 ## Cost control
 
-- Defaults to `temperature=0` and **no extended thinking** for a clean baseline;
-  enable adaptive thinking with `--thinking`.
+- Adaptive thinking is **on by default** for the Claude 5.5 models (it cannot be
+  disabled on Opus 5.5) and is billed as output tokens; `--thinking` only sends it
+  explicitly. Each model runs at its default effort level.
 - `--limit N` caps problems per dataset; start small.
 - Responses are cached by `(model, prompt, params)` hash, so re-runs are free.
-- Every run prints a running cost estimate and stops if `--max-cost` is exceeded.
+- Every run prints a running cost estimate and stops if `--max-cost` is exceeded:
+  queued calls are cancelled, and only calls already in flight (at most
+  `--concurrency`) finish. Their responses are cached, so a re-run records them free.
+  A capped run exits with status 2, so `&&` chains and `scripts/run_all.sh` stop.
 
 ## License
 

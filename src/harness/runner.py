@@ -128,6 +128,7 @@ def run(
             "output_tokens": comp["output_tokens"],
             "cost_usd": comp["cost_usd"],
             "latency_s": comp["latency_s"],
+            "stop_reason": comp.get("stop_reason", ""),
             "from_cache": from_cache,
             "output_text": comp["text"],
         }
@@ -140,21 +141,30 @@ def run(
     try:
         with ThreadPoolExecutor(max_workers=concurrency) as ex:
             futs = {ex.submit(work, p, s): (p, s) for p, s in tasks}
-            for fut in tqdm(as_completed(futs), total=len(futs), ncols=90):
-                rec = fut.result()
-                with lock:
-                    writer.write(json.dumps(rec, ensure_ascii=False) + "\n")
-                    writer.flush()
-                    if not rec["from_cache"]:
-                        state["cost"] += rec["cost_usd"]
-                    state["n"] += 1
-                    state["correct"] += int(rec["correct"])
-                    if max_cost is not None and state["cost"] > max_cost:
-                        raise CostCapExceeded(
-                            f"cost ${state['cost']:.2f} exceeded cap ${max_cost:.2f}"
-                        )
+            try:
+                for fut in tqdm(as_completed(futs), total=len(futs), ncols=90):
+                    rec = fut.result()
+                    with lock:
+                        writer.write(json.dumps(rec, ensure_ascii=False) + "\n")
+                        writer.flush()
+                        if not rec["from_cache"]:
+                            state["cost"] += rec["cost_usd"]
+                        state["n"] += 1
+                        state["correct"] += int(rec["correct"])
+                        if max_cost is not None and state["cost"] > max_cost:
+                            raise CostCapExceeded(
+                                f"cost ${state['cost']:.2f} exceeded cap ${max_cost:.2f}"
+                            )
+            except BaseException:
+                # Drop queued calls so a cap hit or a failed call stops spending;
+                # only the calls already in flight (<= concurrency) still finish.
+                ex.shutdown(wait=False, cancel_futures=True)
+                raise
     except CostCapExceeded as e:
         print(f"\n[stop] {e}")
+        capped = e
+    else:
+        capped = None
     finally:
         writer.close()
 
@@ -163,4 +173,6 @@ def run(
         f"[done] graded={state['n']} acc={acc:.1%} "
         f"new-spend=${state['cost']:.2f} -> {raw_path}"
     )
+    if capped is not None:
+        raise capped
     return raw_path

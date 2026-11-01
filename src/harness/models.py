@@ -1,8 +1,10 @@
 """Anthropic model wrapper with exact token accounting and cost estimation.
 
 Uses the official Anthropic SDK (Messages API). Outputs on math problems are short,
-so calls are non-streaming. Extended thinking is optional (`thinking=True`); when on,
-the API requires temperature = 1, so we honor that automatically.
+so calls are non-streaming. Sampling parameters (`temperature` etc.) are not sent:
+API version 2026-10-21 rejects them. Adaptive thinking is on by default for the
+Claude 5.5 models (and cannot be disabled on Opus 5.5); `thinking=True` only sends it
+explicitly.
 
 NOTE: model ids and prices live in config/models.yaml. Verify prices against the
 official pricing page — token counts here are exact (from response.usage).
@@ -44,6 +46,7 @@ class Completion:
     cost_usd: float
     latency_s: float
     model_id: str
+    stop_reason: str = ""  # "max_tokens" = truncated, "refusal" = declined
 
 
 def load_model_specs() -> Dict[str, ModelSpec]:
@@ -79,11 +82,8 @@ class ClaudeRunner:
             messages=[{"role": "user", "content": problem}],
         )
         if self.thinking:
-            # adaptive thinking (Claude 4.6+); API requires temperature=1 with thinking
+            # adaptive thinking (Claude 4.6+); already the default on the 5.5 models
             kwargs["thinking"] = {"type": "adaptive"}
-            kwargs["temperature"] = 1
-        else:
-            kwargs["temperature"] = 0
 
         t0 = time.time()
         msg = self.client.messages.create(**kwargs)
@@ -102,4 +102,5 @@ class ClaudeRunner:
             cost_usd=cost,
             latency_s=latency,
             model_id=spec.id,
+            stop_reason=msg.stop_reason or "",
         )

@@ -23,16 +23,19 @@ def _models_arg(s: str):
 
 
 def cmd_run(args):
-    from src.harness.runner import run
-    run(
-        dataset=args.dataset,
-        model_aliases=_models_arg(args.models),
-        limit=args.limit,
-        thinking=args.thinking,
-        concurrency=args.concurrency,
-        max_cost=args.max_cost,
-        resume=not args.no_resume,
-    )
+    from src.harness.runner import CostCapExceeded, run
+    try:
+        run(
+            dataset=args.dataset,
+            model_aliases=_models_arg(args.models),
+            limit=args.limit,
+            thinking=args.thinking,
+            concurrency=args.concurrency,
+            max_cost=args.max_cost,
+            resume=not args.no_resume,
+        )
+    except CostCapExceeded:
+        sys.exit(2)  # non-zero so `&&` chains and scripts/run_all.sh stop here
 
 
 def cmd_report(args):
