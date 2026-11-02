@@ -14,7 +14,7 @@ import hashlib
 import json
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -33,9 +33,16 @@ class CostCapExceeded(Exception):
     pass
 
 
-def _cache_key(model_id: str, problem: str, thinking: bool) -> str:
+def _cache_key(model_id: str, problem: str, thinking: bool,
+               max_tokens: Optional[int] = None, sample: int = 0) -> str:
     h = hashlib.sha256()
-    h.update(f"{model_id}|{int(thinking)}|{problem}".encode("utf-8"))
+    key = f"{model_id}|{int(thinking)}|{problem}"
+    # only non-default settings extend the key, so earlier caches stay valid
+    if max_tokens is not None:
+        key += f"|mt={max_tokens}"
+    if sample:
+        key += f"|s={sample}"
+    h.update(key.encode("utf-8"))
     return h.hexdigest()[:24]
 
 
@@ -63,7 +70,7 @@ def _already_done(raw_path: Path) -> set:
             for line in f:
                 try:
                     r = json.loads(line)
-                    done.add((r["uid"], r["model_alias"]))
+                    done.add((r["uid"], r["model_alias"], r.get("sample", 0)))
                 except Exception:
                     continue
     return done
@@ -77,11 +84,15 @@ def run(
     concurrency: int = 6,
     max_cost: Optional[float] = None,
     resume: bool = True,
+    samples: int = 1,
+    max_tokens: Optional[int] = None,
 ) -> Path:
     specs = load_model_specs()
     for a in model_aliases:
         if a not in specs:
             raise ValueError(f"unknown model alias '{a}'. choices: {list(specs)}")
+    if max_tokens is not None:
+        specs = {a: replace(s, max_tokens=max_tokens) for a, s in specs.items()}
 
     problems = load_dataset_by_name(dataset, limit=limit)
     runner = ClaudeRunner(thinking=thinking)
@@ -90,19 +101,22 @@ def run(
     raw_path = RAW_DIR / f"{dataset}.jsonl"
     done = _already_done(raw_path) if resume else set()
 
+    # `samples` independent answers per (problem, model), to measure run-to-run
+    # variance; sampling parameters cannot be set, so repeats differ naturally
     tasks = [
-        (p, specs[a])
+        (p, specs[a], k)
         for p in problems
         for a in model_aliases
-        if (p.uid, a) not in done
+        for k in range(samples)
+        if (p.uid, a, k) not in done
     ]
 
     lock = threading.Lock()
     state = {"cost": 0.0, "n": 0, "correct": 0}
     writer = open(raw_path, "a", encoding="utf-8")
 
-    def work(problem: Problem, spec: ModelSpec) -> Optional[dict]:
-        key = _cache_key(spec.id, problem.problem, thinking)
+    def work(problem: Problem, spec: ModelSpec, sample: int) -> Optional[dict]:
+        key = _cache_key(spec.id, problem.problem, thinking, max_tokens, sample)
         cached = _load_cache(key)
         if cached is not None:
             comp = cached
@@ -120,6 +134,7 @@ def run(
             "topic": problem.topic,
             "model_alias": spec.alias,
             "model_id": spec.id,
+            "sample": sample,
             "answer_ref": problem.answer,
             "answer_extracted": v.extracted,
             "correct": v.correct,
@@ -135,12 +150,12 @@ def run(
 
     print(
         f"[run] dataset={dataset} models={model_aliases} "
-        f"problems={len(problems)} tasks={len(tasks)} "
+        f"problems={len(problems)} samples={samples} tasks={len(tasks)} "
         f"thinking={thinking} concurrency={concurrency}"
     )
     try:
         with ThreadPoolExecutor(max_workers=concurrency) as ex:
-            futs = {ex.submit(work, p, s): (p, s) for p, s in tasks}
+            futs = {ex.submit(work, p, s, k): (p, s, k) for p, s, k in tasks}
             try:
                 for fut in tqdm(as_completed(futs), total=len(futs), ncols=90):
                     rec = fut.result()
