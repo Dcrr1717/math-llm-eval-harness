@@ -13,6 +13,11 @@ venv/
 # the response cache is a local re-run aid only
 results/cache/
 
+# held-out hard set: problems, builder and model outputs stay local, so the set
+# cannot leak into training data; only aggregates and the SHA-256 are published
+data/private/
+results/raw/private.jsonl
+
 # hf datasets cache
 data/hf_cache/
 

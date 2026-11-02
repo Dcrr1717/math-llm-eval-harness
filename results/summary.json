@@ -1,32 +1,32 @@
 {
   "overall": {
-    "count": 1254,
-    "accuracy": 0.9904306220095693,
-    "cost_usd": 5.2840179,
-    "avg_latency_s": 3.415204791361065,
-    "tokens_out": 541177
+    "count": 1704,
+    "accuracy": 0.9835680751173709,
+    "cost_usd": 14.2740186,
+    "avg_latency_s": 6.814077550396673,
+    "tokens_out": 1781038
   },
   "models": {
     "haiku": {
-      "count": 418,
-      "accuracy": 0.9760765550239234,
-      "cost_usd": 0.1270039,
-      "avg_latency_s": 2.89024629718379,
-      "tokens_out": 239356
+      "count": 568,
+      "accuracy": 0.971830985915493,
+      "cost_usd": 0.4579626,
+      "avg_latency_s": 6.879252370394451,
+      "tokens_out": 897350
     },
     "sonnet": {
-      "count": 418,
-      "accuracy": 0.9952153110047847,
-      "cost_usd": 1.465478,
-      "avg_latency_s": 3.019777850671248,
-      "tokens_out": 131896
+      "count": 568,
+      "accuracy": 0.9859154929577465,
+      "cost_usd": 4.600712,
+      "avg_latency_s": 6.103611089813877,
+      "tokens_out": 441496
     },
     "opus": {
-      "count": 418,
-      "accuracy": 1.0,
-      "cost_usd": 3.691536,
-      "avg_latency_s": 4.335590226228157,
-      "tokens_out": 169925
+      "count": 568,
+      "accuracy": 0.9929577464788732,
+      "cost_usd": 9.215344,
+      "avg_latency_s": 7.459369190981691,
+      "tokens_out": 442192
     }
   },
   "by_dataset": {
@@ -51,6 +51,13 @@
         "cost_usd": 0.0007751,
         "avg_latency_s": 1.0196762084960938,
         "tokens_out": 1182
+      },
+      "private": {
+        "count": 150,
+        "accuracy": 0.96,
+        "cost_usd": 0.3309587,
+        "avg_latency_s": 17.995282627741496,
+        "tokens_out": 657994
       }
     },
     "sonnet": {
@@ -74,6 +81,13 @@
         "cost_usd": 0.018642,
         "avg_latency_s": 1.6959541771146986,
         "tokens_out": 1496
+      },
+      "private": {
+        "count": 150,
+        "accuracy": 0.96,
+        "cost_usd": 3.135234,
+        "avg_latency_s": 14.697226382891337,
+        "tokens_out": 309600
       }
     },
     "opus": {
@@ -97,6 +111,13 @@
         "cost_usd": 0.036424,
         "avg_latency_s": 2.246166547139486,
         "tokens_out": 1453
+      },
+      "private": {
+        "count": 150,
+        "accuracy": 0.9733333333333334,
+        "cost_usd": 5.523808,
+        "avg_latency_s": 16.164299906094868,
+        "tokens_out": 272267
       }
     }
   },
@@ -159,11 +180,11 @@
         "tokens_out": 21072
       },
       "algebra": {
-        "count": 3,
+        "count": 6,
         "accuracy": 1.0,
-        "cost_usd": 0.00010850000000000001,
-        "avg_latency_s": 0.998205820719401,
-        "tokens_out": 161
+        "cost_usd": 0.0017357,
+        "avg_latency_s": 2.718927343686422,
+        "tokens_out": 3347
       },
       "percentages": {
         "count": 2,
@@ -241,6 +262,69 @@
         "cost_usd": 3.33e-05,
         "avg_latency_s": 0.7852747440338135,
         "tokens_out": 45
+      },
+      "number-theory": {
+        "count": 18,
+        "accuracy": 1.0,
+        "cost_usd": 0.0264268,
+        "avg_latency_s": 11.969911879963345,
+        "tokens_out": 52424
+      },
+      "linear-algebra": {
+        "count": 15,
+        "accuracy": 1.0,
+        "cost_usd": 0.0189591,
+        "avg_latency_s": 10.615410900115966,
+        "tokens_out": 37569
+      },
+      "group-theory": {
+        "count": 6,
+        "accuracy": 0.8333333333333334,
+        "cost_usd": 0.0084166,
+        "avg_latency_s": 11.046363592147827,
+        "tokens_out": 16709
+      },
+      "combinatorics": {
+        "count": 36,
+        "accuracy": 0.9444444444444444,
+        "cost_usd": 0.1349959,
+        "avg_latency_s": 29.15638750129276,
+        "tokens_out": 269132
+      },
+      "game-theory": {
+        "count": 3,
+        "accuracy": 1.0,
+        "cost_usd": 0.0022684,
+        "avg_latency_s": 6.170689503351848,
+        "tokens_out": 4427
+      },
+      "graph-theory": {
+        "count": 15,
+        "accuracy": 0.9333333333333333,
+        "cost_usd": 0.019863699999999998,
+        "avg_latency_s": 10.548084195454916,
+        "tokens_out": 39377
+      },
+      "probability": {
+        "count": 18,
+        "accuracy": 0.8888888888888888,
+        "cost_usd": 0.0310623,
+        "avg_latency_s": 13.996722989612156,
+        "tokens_out": 61632
+      },
+      "analysis": {
+        "count": 18,
+        "accuracy": 1.0,
+        "cost_usd": 0.0229831,
+        "avg_latency_s": 10.885185016526115,
+        "tokens_out": 45518
+      },
+      "topology": {
+        "count": 18,
+        "accuracy": 1.0,
+        "cost_usd": 0.0643556,
+        "avg_latency_s": 31.70933683713277,
+        "tokens_out": 128020
       }
     },
     "sonnet": {
@@ -301,11 +385,11 @@
         "tokens_out": 14588
       },
       "algebra": {
-        "count": 3,
+        "count": 6,
         "accuracy": 1.0,
-        "cost_usd": 0.00248,
-        "avg_latency_s": 2.085724671681722,
-        "tokens_out": 192
+        "cost_usd": 0.023954,
+        "avg_latency_s": 3.6090258359909058,
+        "tokens_out": 2271
       },
       "percentages": {
         "count": 2,
@@ -383,6 +467,69 @@
         "cost_usd": 0.000676,
         "avg_latency_s": 1.5534517765045166,
         "tokens_out": 46
+      },
+      "number-theory": {
+        "count": 18,
+        "accuracy": 1.0,
+        "cost_usd": 0.293986,
+        "avg_latency_s": 12.010986222161186,
+        "tokens_out": 28969
+      },
+      "linear-algebra": {
+        "count": 15,
+        "accuracy": 0.8666666666666667,
+        "cost_usd": 0.179722,
+        "avg_latency_s": 8.209302806854248,
+        "tokens_out": 17623
+      },
+      "group-theory": {
+        "count": 6,
+        "accuracy": 1.0,
+        "cost_usd": 0.085632,
+        "avg_latency_s": 9.398122549057007,
+        "tokens_out": 8439
+      },
+      "combinatorics": {
+        "count": 36,
+        "accuracy": 0.9166666666666666,
+        "cost_usd": 1.115538,
+        "avg_latency_s": 20.69417287243737,
+        "tokens_out": 110694
+      },
+      "game-theory": {
+        "count": 3,
+        "accuracy": 1.0,
+        "cost_usd": 0.026578,
+        "avg_latency_s": 6.613704999287923,
+        "tokens_out": 2548
+      },
+      "graph-theory": {
+        "count": 15,
+        "accuracy": 1.0,
+        "cost_usd": 0.135854,
+        "avg_latency_s": 6.438905477523804,
+        "tokens_out": 13235
+      },
+      "probability": {
+        "count": 18,
+        "accuracy": 1.0,
+        "cost_usd": 0.330916,
+        "avg_latency_s": 12.648310754034254,
+        "tokens_out": 32599
+      },
+      "analysis": {
+        "count": 18,
+        "accuracy": 1.0,
+        "cost_usd": 0.257152,
+        "avg_latency_s": 10.771037326918709,
+        "tokens_out": 25267
+      },
+      "topology": {
+        "count": 18,
+        "accuracy": 0.9444444444444444,
+        "cost_usd": 0.688382,
+        "avg_latency_s": 28.360986722840202,
+        "tokens_out": 68147
       }
     },
     "opus": {
@@ -443,11 +590,11 @@
         "tokens_out": 15115
       },
       "algebra": {
-        "count": 3,
+        "count": 6,
         "accuracy": 1.0,
-        "cost_usd": 0.00634,
-        "avg_latency_s": 1.9960589408874512,
-        "tokens_out": 261
+        "cost_usd": 0.054888,
+        "avg_latency_s": 4.27030885219574,
+        "tokens_out": 2620
       },
       "percentages": {
         "count": 2,
@@ -525,19 +672,83 @@
         "cost_usd": 0.0019199999999999998,
         "avg_latency_s": 8.437467336654663,
         "tokens_out": 75
+      },
+      "number-theory": {
+        "count": 18,
+        "accuracy": 1.0,
+        "cost_usd": 0.664152,
+        "avg_latency_s": 15.976376586490208,
+        "tokens_out": 32778
+      },
+      "linear-algebra": {
+        "count": 15,
+        "accuracy": 1.0,
+        "cost_usd": 0.41848399999999997,
+        "avg_latency_s": 11.828174622853597,
+        "tokens_out": 20575
+      },
+      "group-theory": {
+        "count": 6,
+        "accuracy": 1.0,
+        "cost_usd": 0.20266399999999998,
+        "avg_latency_s": 13.993123094240824,
+        "tokens_out": 10009
+      },
+      "combinatorics": {
+        "count": 36,
+        "accuracy": 0.9166666666666666,
+        "cost_usd": 1.644676,
+        "avg_latency_s": 19.9875478082233,
+        "tokens_out": 81374
+      },
+      "game-theory": {
+        "count": 3,
+        "accuracy": 1.0,
+        "cost_usd": 0.05097600000000001,
+        "avg_latency_s": 7.737642685572307,
+        "tokens_out": 2439
+      },
+      "graph-theory": {
+        "count": 15,
+        "accuracy": 1.0,
+        "cost_usd": 0.326448,
+        "avg_latency_s": 9.428851795196532,
+        "tokens_out": 15972
+      },
+      "probability": {
+        "count": 18,
+        "accuracy": 1.0,
+        "cost_usd": 0.716472,
+        "avg_latency_s": 17.45991243256463,
+        "tokens_out": 35331
+      },
+      "analysis": {
+        "count": 18,
+        "accuracy": 1.0,
+        "cost_usd": 0.531724,
+        "avg_latency_s": 13.482947071393331,
+        "tokens_out": 26138
+      },
+      "topology": {
+        "count": 18,
+        "accuracy": 0.9444444444444444,
+        "cost_usd": 0.919664,
+        "avg_latency_s": 23.0492375559277,
+        "tokens_out": 45292
       }
     }
   },
   "grade_methods": {
-    "exact": 1196,
+    "exact": 1595,
     "no-text": 5,
-    "numeric": 29,
+    "numeric": 64,
     "list": 1,
     "symbolic": 11
   },
   "datasets_present": [
     "gsm8k",
     "math",
-    "own"
+    "own",
+    "private"
   ]
 }

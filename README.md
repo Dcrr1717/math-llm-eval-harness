@@ -45,6 +45,9 @@ python -m src.cli dashboard   # writes results/dashboard.html
 
 # hardest MATH problems only (any subset of "Level 1" ... "Level 5")
 MATH_LEVELS="Level 5" python -m src.cli run --dataset math --limit 200 --models opus,sonnet,haiku
+
+# held-out private set (see data/PRIVATE_SET.md): room for long thinking, 3 answers each
+python -m src.cli run --dataset private --models haiku --samples 3 --max-tokens 64000
 ```
 
 ## Results (2 Nov 2026)
@@ -73,11 +76,45 @@ Two caveats. Both benchmarks are public and close to saturated for current model
 these numbers mostly separate cost, not capability; and contamination of public test
 sets cannot be ruled out. A harder, private problem set is the natural next step.
 
+## Results on the private held-out set (2 Nov 2026)
+
+50 new problems that have never been published (see `data/PRIVATE_SET.md`), each
+answered 3 times per model with adaptive thinking and `--max-tokens 64000` (no answer
+was truncated). Every error below was checked by hand: all are real model mistakes,
+mostly a wrong digit late in a long exact computation, none is a grading artefact.
+
+| Model | Accuracy (150 answers) | 95% CI (Wilson) | Solved 3/3 | Majority of 3 | Cost | Cost per correct |
+|---|---|---|---|---|---|---|
+| Claude Opus 5.5 | 97.3% | 93.3-99.0% | 47/50 | 49/50 | $5.52 | $0.038 |
+| Claude Sonnet 5.5 | 96.0% | 91.5-98.2% | 46/50 | 48/50 | $3.14 | $0.022 |
+| Claude Haiku 5.5 | 96.0% | 91.5-98.2% | 44/50 | 50/50 | $0.33 | $0.002 |
+
+What this shows:
+
+- **Fresh problems do not change the picture.** The first 32 items (olympiad style)
+  were solved 32/32 by Haiku on the first pass, and so were the 18 harder ones added
+  afterwards. Hand-checkable computational mathematics at this level is saturated for
+  all three models, contamination or not.
+- **The three models are statistically indistinguishable here**; the intervals
+  overlap almost completely. What separates them is cost: Haiku is about 16x cheaper
+  per correct answer than Opus.
+- **Errors are unreliability, not inability.** Every item was solved by every model in
+  at least one of its three attempts (pass@3 = 50/50 for all). Haiku's errors are
+  scattered single slips, so a majority vote over 3 Haiku answers scored 50/50 while
+  costing under a fifth of a single Opus answer per problem.
+- Haiku writes longer solutions (about 4,400 output tokens per answer, against about
+  1,800 for Opus) and is still the cheapest by an order of magnitude.
+
+Small-sample caveat: 50 items and 3 samples cannot resolve differences of one or two
+points. Separating these models needs problems where they fail often, which means
+research-level questions or graded proofs rather than exact final answers.
+
 ## Layout
 
 ```
 config/models.yaml      model ids, params, per-token pricing (VERIFY prices)
 data/own/               custom problem set (JSONL)
+data/PRIVATE_SET.md     held-out set: hash commitment and method (problems gitignored)
 src/harness/datasets.py load GSM8K / MATH / own_es -> unified Problem
 src/harness/models.py   Anthropic client wrapper + cost tracking
 src/harness/grading.py  answer extraction + exact/numeric/symbolic checks

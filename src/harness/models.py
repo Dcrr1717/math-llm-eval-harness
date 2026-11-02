@@ -1,7 +1,7 @@
 """Anthropic model wrapper with exact token accounting and cost estimation.
 
-Uses the official Anthropic SDK (Messages API). Outputs on math problems are short,
-so calls are non-streaming. Sampling parameters (`temperature` etc.) are not sent:
+Uses the official Anthropic SDK (Messages API). Calls are streamed and the final
+message is collected, so long thinking on hard problems does not time out. Sampling parameters (`temperature` etc.) are not sent:
 API version 2026-10-21 rejects them. Adaptive thinking is on by default for the
 Claude 5.5 models (and cannot be disabled on Opus 5.5); `thinking=True` only sends it
 explicitly.
@@ -86,7 +86,10 @@ class ClaudeRunner:
             kwargs["thinking"] = {"type": "adaptive"}
 
         t0 = time.time()
-        msg = self.client.messages.create(**kwargs)
+        # streamed, so a large max_tokens (long thinking on hard sets) cannot
+        # hit the non-streaming request timeout
+        with self.client.messages.stream(**kwargs) as stream:
+            msg = stream.get_final_message()
         latency = time.time() - t0
 
         text = "".join(

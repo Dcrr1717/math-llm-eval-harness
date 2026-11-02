@@ -156,7 +156,19 @@ def load_math(limit: Optional[int] = None, split: str = "test") -> List[Problem]
 
 
 def load_own(limit: Optional[int] = None) -> List[Problem]:
-    path = DATA_DIR / "own" / "problems.jsonl"
+    return _load_jsonl(DATA_DIR / "own" / "problems.jsonl", "own", limit)
+
+
+def load_private(limit: Optional[int] = None) -> List[Problem]:
+    """The held-out hard set. It is gitignored and never published, so it cannot
+    leak into training data; only its SHA-256 (data/PRIVATE_SET.md) is committed."""
+    path = Path(os.environ.get("PRIVATE_SET", DATA_DIR / "private" / "problems.jsonl"))
+    if not path.exists():
+        raise FileNotFoundError(f"private set not found at {path} (set PRIVATE_SET)")
+    return _load_jsonl(path, "private", limit)
+
+
+def _load_jsonl(path: Path, dataset: str, limit: Optional[int]) -> List[Problem]:
     out: List[Problem] = []
     with open(path, encoding="utf-8") as f:
         for i, line in enumerate(f):
@@ -168,8 +180,8 @@ def load_own(limit: Optional[int] = None) -> List[Problem]:
             r = json.loads(line)
             out.append(
                 Problem(
-                    uid=r.get("uid", f"own/{i:04d}"),
-                    dataset="own",
+                    uid=r.get("uid", f"{dataset}/{i:04d}"),
+                    dataset=dataset,
                     topic=r.get("topic", "general"),
                     problem=r["problem"].strip(),
                     answer=str(r["answer"]).strip(),
@@ -179,7 +191,7 @@ def load_own(limit: Optional[int] = None) -> List[Problem]:
     return out
 
 
-LOADERS = {"gsm8k": load_gsm8k, "math": load_math, "own": load_own}
+LOADERS = {"gsm8k": load_gsm8k, "math": load_math, "own": load_own, "private": load_private}
 
 
 def load_dataset_by_name(name: str, limit: Optional[int] = None) -> List[Problem]:

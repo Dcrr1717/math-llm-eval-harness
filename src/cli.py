@@ -33,6 +33,8 @@ def cmd_run(args):
             concurrency=args.concurrency,
             max_cost=args.max_cost,
             resume=not args.no_resume,
+            samples=args.samples,
+            max_tokens=args.max_tokens,
         )
     except CostCapExceeded:
         sys.exit(2)  # non-zero so `&&` chains and scripts/run_all.sh stop here
@@ -55,13 +57,18 @@ def main(argv=None):
     sub = p.add_subparsers(dest="cmd", required=True)
 
     r = sub.add_parser("run", help="run an evaluation")
-    r.add_argument("--dataset", required=True, choices=["gsm8k", "math", "own"])
+    r.add_argument("--dataset", required=True,
+                   choices=["gsm8k", "math", "own", "private"])
     r.add_argument("--models", default="haiku", help="comma list of aliases")
     r.add_argument("--limit", type=int, default=None, help="max problems")
     r.add_argument("--thinking", action="store_true", help="enable adaptive thinking")
     r.add_argument("--concurrency", type=int, default=6)
     r.add_argument("--max-cost", type=float, default=None, help="hard USD cap")
     r.add_argument("--no-resume", action="store_true")
+    r.add_argument("--samples", type=int, default=1,
+                   help="independent answers per (problem, model)")
+    r.add_argument("--max-tokens", type=int, default=None,
+                   help="override max_tokens from config/models.yaml")
     r.set_defaults(func=cmd_run)
 
     rp = sub.add_parser("report", help="aggregate raw results")
