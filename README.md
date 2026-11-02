@@ -42,7 +42,36 @@ python -m src.cli run --dataset own --models opus,sonnet,haiku
 # aggregate + dashboard
 python -m src.cli report
 python -m src.cli dashboard   # writes results/dashboard.html
+
+# hardest MATH problems only (any subset of "Level 1" ... "Level 5")
+MATH_LEVELS="Level 5" python -m src.cli run --dataset math --limit 200 --models opus,sonnet,haiku
 ```
+
+## Results (2 Nov 2026)
+
+200 GSM8K test problems, 200 MATH **Level 5** problems (all 7 subjects, interleaved)
+and the 15-item custom set, each answered by the three models with adaptive thinking.
+
+| Model | Accuracy (418 items) | Total cost | Cost per correct answer |
+|---|---|---|---|
+| Claude Opus 5.5 | 100.0% | $3.69 | $0.0088 |
+| Claude Sonnet 5.5 | 99.5% | $1.47 | $0.0035 |
+| Claude Haiku 5.5 | 97.6% | $0.13 | $0.0003 |
+
+Raw responses are in `results/raw/`, the aggregate in `results/summary.json`, and the
+dashboard in `results/dashboard.html`.
+
+**What the run taught us about grading.** On MATH Level 5 the first grader marked 20
+answers wrong; only 3 were real errors. The other 17 were false negatives: `\text{Friday}`
+reduced to an empty string, shorthand LaTeX (`\frac{270}7`, `\frac \pi4`, `\sqrt6`),
+solution lists in a different order, column vectors written as tuples, units and base
+subscripts. At 2.8% the grader's error was larger than the gap between the models it was
+measuring. The fixes are covered by regression tests (`tests/test_grading.py`), and
+re-grading the cached responses flipped 18 verdicts to correct and none to incorrect.
+
+Two caveats. Both benchmarks are public and close to saturated for current models, so
+these numbers mostly separate cost, not capability; and contamination of public test
+sets cannot be ruled out. A harder, private problem set is the natural next step.
 
 ## Layout
 

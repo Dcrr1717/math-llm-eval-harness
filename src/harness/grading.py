@@ -115,20 +115,58 @@ _LATEX_WRAPPERS = [
 ]
 
 
+# Unit words that MATH references sometimes carry ("\text{ degrees}") and models
+# usually drop. Removed as whole words only.
+_UNIT_WORDS = re.compile(
+    r"\b(?:degrees?|units?|square\s+units?|sq\s+units?|cm|meters?|inches|feet|"
+    r"dollars?|cents?|hours?|minutes?|seconds?|days?)\b",
+    re.IGNORECASE,
+)
+# one LaTeX argument: {braced}, a \command, or a single character
+_ARG = r"(\{[^{}]*\}|\\[a-zA-Z]+|[^\s{}\\])"
+
+
+def _unbrace(arg: str) -> str:
+    return arg[1:-1] if arg.startswith("{") and arg.endswith("}") else arg
+
+
 def _strip_latex(s: str) -> str:
     s = s.strip()
     s = s.strip("$")
+    # matrices / column vectors -> tuples (before the wrappers, which would
+    # eat the "\\ " row separators)
+    s = re.sub(
+        r"\\begin\{[pb]matrix\}(.*?)\\end\{[pb]matrix\}",
+        lambda m: "(" + ",".join(p.strip() for p in m.group(1).split(r"\\")) + ")",
+        s,
+        flags=re.DOTALL,
+    )
     for a, b in _LATEX_WRAPPERS:
         s = s.replace(a, b)
+    # keep the content of text-like wrappers, then drop unit words
+    s = re.sub(r"\\(?:text|textbf|mbox|mathrm)\s*\{([^{}]*)\}", r"\1", s)
+    s = _UNIT_WORDS.sub("", s)
+    # "12 and 13" -> "12,13"
+    s = re.sub(r"\s+and\s+", ",", s)
+    # base subscripts: 0.0011_{2} -> 0.0011
+    s = re.sub(r"_\{?\d+\}?\s*$", "", s)
     # \dfrac/\tfrac -> \frac
     s = s.replace(r"\dfrac", r"\frac").replace(r"\tfrac", r"\frac")
-    # \frac{a}{b} -> (a)/(b)
-    s = re.sub(r"\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}", r"(\1)/(\2)", s)
+    # sqrt before frac, so \frac{\sqrt{6}}{6} has no nested braces left
     s = re.sub(r"\\sqrt\s*\{([^{}]*)\}", r"sqrt(\1)", s)
     s = re.sub(r"\\sqrt\s*(\w)", r"sqrt(\1)", s)
-    s = s.replace(r"\pi", "pi").replace(r"\cdot", "*").replace(r"\times", "*")
+    # \frac{a}{b}, \frac{a}b, \frac ab, \frac\pi4 -> (a)/(b); repeat for nesting
+    prev = None
+    while prev != s:
+        prev = s
+        s = re.sub(
+            r"\\frac\s*" + _ARG + r"\s*" + _ARG,
+            lambda m: f"({_unbrace(m.group(1))})/({_unbrace(m.group(2))})",
+            s,
+        )
+    s = s.replace(r"\pi", "pi")  # after \frac, which reads \pi as one argument
+    s = s.replace(r"\cdot", "*").replace(r"\times", "*")
     s = s.replace(r"\le", "<=").replace(r"\ge", ">=")
-    s = re.sub(r"\\text\s*\{[^{}]*\}", "", s)
     s = s.replace("{", "").replace("}", "")
     s = s.replace("\\", "")
     return s.strip()
@@ -200,6 +238,59 @@ def _symbolic_equal(a: str, b: str) -> bool:
             return False
 
 
+_TEXT_RE = re.compile(r"\\(?:text|textbf|mbox|mathrm)\s*\{[^{}]*\}")
+
+
+def _drop_text(s: str) -> str:
+    """Remove text annotations entirely: '45 \\text{ miles}' -> '45 '."""
+    return _TEXT_RE.sub("", s)
+
+
+def _scalar_equal(a: str, b: str) -> bool:
+    na = normalize(a)
+    return (na == normalize(b) and na != "") or _numeric_equal(a, b) or _symbolic_equal(a, b)
+
+
+def _split_top_level(s: str) -> list[str]:
+    """Split on commas that are not inside (), [] or {}."""
+    parts, depth, cur = [], 0, ""
+    for ch in s:
+        if ch in "([{":
+            depth += 1
+        elif ch in ")]}":
+            depth -= 1
+        if ch == "," and depth == 0:
+            parts.append(cur)
+            cur = ""
+        else:
+            cur += ch
+    parts.append(cur)
+    return [p.strip() for p in parts]
+
+
+def _list_equal(a: str, b: str) -> bool:
+    """Compare multi-part answers: a parenthesized tuple is ordered, a bare
+    comma list (e.g. all solutions of an equation) is unordered."""
+    sa, sb = _strip_latex(a).strip(), _strip_latex(b).strip()
+    ordered = all(x.startswith("(") and x.endswith(")") for x in (sa, sb))
+    if ordered:
+        sa, sb = sa[1:-1], sb[1:-1]
+    elif any(c in x for x in (sa, sb) for c in "()[]"):
+        return False  # intervals and mixed forms are not handled here
+    pa, pb = _split_top_level(sa), _split_top_level(sb)
+    if len(pa) < 2 or len(pa) != len(pb):
+        return False
+    if ordered:
+        return all(_scalar_equal(x, y) for x, y in zip(pa, pb))
+    remaining = list(pb)
+    for x in pa:
+        match = next((y for y in remaining if _scalar_equal(x, y)), None)
+        if match is None:
+            return False
+        remaining.remove(match)
+    return True
+
+
 # --------------------------------------------------------------------------- #
 # public API
 # --------------------------------------------------------------------------- #
@@ -213,4 +304,10 @@ def grade(model_output: str, reference: str) -> Verdict:
         return Verdict(True, "numeric", extracted, normalize(ref))
     if _symbolic_equal(extracted, ref):
         return Verdict(True, "symbolic", extracted, normalize(ref))
+    if _list_equal(extracted, ref):
+        return Verdict(True, "list", extracted, normalize(ref))
+    # last resort: units or prose wrapped in \text{} on either side
+    a, b = _drop_text(extracted), _drop_text(ref)
+    if (a, b) != (extracted, ref) and _scalar_equal(a, b):
+        return Verdict(True, "no-text", extracted, normalize(ref))
     return Verdict(False, "none", extracted, normalize(ref))
