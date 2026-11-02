@@ -1,6 +1,7 @@
 """Load GSM8K, MATH and the custom Spanish set into one `Problem` schema."""
 from __future__ import annotations
 
+import itertools
 import json
 import os
 import re
@@ -57,8 +58,34 @@ def load_gsm8k(limit: Optional[int] = None, split: str = "test") -> List[Problem
 MATH_HUB_CANDIDATES = [
     ("hendrycks/competition_math", None),
     ("lighteval/MATH", "all"),
-    ("EleutherAI/hendrycks_math", "all"),
 ]
+
+# EleutherAI/hendrycks_math has no "all" config: one config per subject.
+MATH_SUBJECT_MIRROR = "EleutherAI/hendrycks_math"
+MATH_SUBJECTS = [
+    "algebra",
+    "counting_and_probability",
+    "geometry",
+    "intermediate_algebra",
+    "number_theory",
+    "prealgebra",
+    "precalculus",
+]
+
+
+def _load_math_by_subject(split: str) -> list:
+    """Load every subject config and interleave them round-robin, so that a
+    `--limit` samples all subjects instead of only the first one."""
+    from datasets import load_dataset
+
+    parts = [
+        load_dataset(MATH_SUBJECT_MIRROR, s, split=split, cache_dir=str(HF_CACHE))
+        for s in MATH_SUBJECTS
+    ]
+    rows: list = []
+    for group in itertools.zip_longest(*parts):
+        rows.extend(r for r in group if r is not None)
+    return rows
 
 
 def _last_boxed(text: str) -> str:
@@ -96,13 +123,23 @@ def load_math(limit: Optional[int] = None, split: str = "test") -> List[Problem]
             last_err = e
             ds = None
     if ds is None:
-        raise RuntimeError(
-            f"Could not load MATH from any mirror {MATH_HUB_CANDIDATES}: {last_err}"
-        )
+        try:
+            ds = _load_math_by_subject(split)
+        except Exception as e:
+            raise RuntimeError(
+                f"Could not load MATH from any mirror "
+                f"{MATH_HUB_CANDIDATES + [(MATH_SUBJECT_MIRROR, MATH_SUBJECTS)]}: "
+                f"{e} (previous: {last_err})"
+            ) from e
+
+    # Optional difficulty filter, e.g. MATH_LEVELS="Level 5" or "Level 4,Level 5".
+    levels = {s.strip() for s in os.environ.get("MATH_LEVELS", "").split(",") if s.strip()}
 
     out: List[Problem] = []
     for i, row in enumerate(ds):
-        if limit is not None and i >= limit:
+        if levels and row.get("level") not in levels:
+            continue
+        if limit is not None and len(out) >= limit:
             break
         topic = row.get("type") or row.get("subject") or "math"
         out.append(

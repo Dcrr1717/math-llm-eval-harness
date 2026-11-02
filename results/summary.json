@@ -1,0 +1,543 @@
+{
+  "overall": {
+    "count": 1254,
+    "accuracy": 0.9904306220095693,
+    "cost_usd": 5.2840179,
+    "avg_latency_s": 3.415204791361065,
+    "tokens_out": 541177
+  },
+  "models": {
+    "haiku": {
+      "count": 418,
+      "accuracy": 0.9760765550239234,
+      "cost_usd": 0.1270039,
+      "avg_latency_s": 2.89024629718379,
+      "tokens_out": 239356
+    },
+    "sonnet": {
+      "count": 418,
+      "accuracy": 0.9952153110047847,
+      "cost_usd": 1.465478,
+      "avg_latency_s": 3.019777850671248,
+      "tokens_out": 131896
+    },
+    "opus": {
+      "count": 418,
+      "accuracy": 1.0,
+      "cost_usd": 3.691536,
+      "avg_latency_s": 4.335590226228157,
+      "tokens_out": 169925
+    }
+  },
+  "by_dataset": {
+    "haiku": {
+      "gsm8k": {
+        "count": 200,
+        "accuracy": 0.965,
+        "cost_usd": 0.0241699,
+        "avg_latency_s": 1.4816470313072205,
+        "tokens_out": 42121
+      },
+      "math": {
+        "count": 200,
+        "accuracy": 0.985,
+        "cost_usd": 0.1020589,
+        "avg_latency_s": 4.467196871042251,
+        "tokens_out": 196053
+      },
+      "own": {
+        "count": 18,
+        "accuracy": 1.0,
+        "cost_usd": 0.0007751,
+        "avg_latency_s": 1.0196762084960938,
+        "tokens_out": 1182
+      }
+    },
+    "sonnet": {
+      "gsm8k": {
+        "count": 200,
+        "accuracy": 0.99,
+        "cost_usd": 0.382068,
+        "avg_latency_s": 2.0392084181308747,
+        "tokens_out": 31988
+      },
+      "math": {
+        "count": 200,
+        "accuracy": 1.0,
+        "cost_usd": 1.064768,
+        "avg_latency_s": 4.119491413831711,
+        "tokens_out": 98412
+      },
+      "own": {
+        "count": 18,
+        "accuracy": 1.0,
+        "cost_usd": 0.018642,
+        "avg_latency_s": 1.6959541771146986,
+        "tokens_out": 1496
+      }
+    },
+    "opus": {
+      "gsm8k": {
+        "count": 200,
+        "accuracy": 1.0,
+        "cost_usd": 0.861836,
+        "avg_latency_s": 2.6098267817497254,
+        "tokens_out": 36873
+      },
+      "math": {
+        "count": 200,
+        "accuracy": 1.0,
+        "cost_usd": 2.793276,
+        "avg_latency_s": 6.24940180182457,
+        "tokens_out": 131599
+      },
+      "own": {
+        "count": 18,
+        "accuracy": 1.0,
+        "cost_usd": 0.036424,
+        "avg_latency_s": 2.246166547139486,
+        "tokens_out": 1453
+      }
+    }
+  },
+  "by_topic": {
+    "haiku": {
+      "word-problem": {
+        "count": 200,
+        "accuracy": 0.965,
+        "cost_usd": 0.0241699,
+        "avg_latency_s": 1.4816470313072205,
+        "tokens_out": 42121
+      },
+      "Prealgebra": {
+        "count": 22,
+        "accuracy": 1.0,
+        "cost_usd": 0.0058924,
+        "avg_latency_s": 2.675291971726851,
+        "tokens_out": 10830
+      },
+      "Intermediate Algebra": {
+        "count": 30,
+        "accuracy": 0.9666666666666667,
+        "cost_usd": 0.0206187,
+        "avg_latency_s": 5.566884589195252,
+        "tokens_out": 40015
+      },
+      "Precalculus": {
+        "count": 28,
+        "accuracy": 1.0,
+        "cost_usd": 0.0217922,
+        "avg_latency_s": 6.691523713724954,
+        "tokens_out": 42293
+      },
+      "Geometry": {
+        "count": 33,
+        "accuracy": 1.0,
+        "cost_usd": 0.0251101,
+        "avg_latency_s": 6.510081666888612,
+        "tokens_out": 48437
+      },
+      "Algebra": {
+        "count": 20,
+        "accuracy": 1.0,
+        "cost_usd": 0.0039335,
+        "avg_latency_s": 1.9438867330551148,
+        "tokens_out": 7298
+      },
+      "Number Theory": {
+        "count": 39,
+        "accuracy": 0.9743589743589743,
+        "cost_usd": 0.0136183,
+        "avg_latency_s": 3.2224132281083326,
+        "tokens_out": 26108
+      },
+      "Counting & Probability": {
+        "count": 28,
+        "accuracy": 0.9642857142857143,
+        "cost_usd": 0.0110937,
+        "avg_latency_s": 3.6010429859161377,
+        "tokens_out": 21072
+      },
+      "algebra": {
+        "count": 3,
+        "accuracy": 1.0,
+        "cost_usd": 0.00010850000000000001,
+        "avg_latency_s": 0.998205820719401,
+        "tokens_out": 161
+      },
+      "percentages": {
+        "count": 2,
+        "accuracy": 1.0,
+        "cost_usd": 9.109999999999999e-05,
+        "avg_latency_s": 1.0371114015579224,
+        "tokens_out": 141
+      },
+      "proportionality": {
+        "count": 2,
+        "accuracy": 1.0,
+        "cost_usd": 0.0001084,
+        "avg_latency_s": 1.2971711158752441,
+        "tokens_out": 174
+      },
+      "geometry": {
+        "count": 3,
+        "accuracy": 1.0,
+        "cost_usd": 0.0001155,
+        "avg_latency_s": 0.9313797156016032,
+        "tokens_out": 169
+      },
+      "systems": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 5.41e-05,
+        "avg_latency_s": 0.8771557807922363,
+        "tokens_out": 88
+      },
+      "economics": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 4.54e-05,
+        "avg_latency_s": 1.0537986755371094,
+        "tokens_out": 69
+      },
+      "arithmetic": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 4.26e-05,
+        "avg_latency_s": 0.9291815757751465,
+        "tokens_out": 65
+      },
+      "interest": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 7.38e-05,
+        "avg_latency_s": 1.0436172485351562,
+        "tokens_out": 125
+      },
+      "statistics": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 4.17e-05,
+        "avg_latency_s": 0.88175368309021,
+        "tokens_out": 65
+      },
+      "fractions": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 3e-05,
+        "avg_latency_s": 1.2864491939544678,
+        "tokens_out": 39
+      },
+      "conversion": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 3.07e-05,
+        "avg_latency_s": 1.0396192073822021,
+        "tokens_out": 41
+      },
+      "speed": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 3.33e-05,
+        "avg_latency_s": 0.7852747440338135,
+        "tokens_out": 45
+      }
+    },
+    "sonnet": {
+      "word-problem": {
+        "count": 200,
+        "accuracy": 0.99,
+        "cost_usd": 0.382068,
+        "avg_latency_s": 2.0392084181308747,
+        "tokens_out": 31988
+      },
+      "Intermediate Algebra": {
+        "count": 30,
+        "accuracy": 1.0,
+        "cost_usd": 0.237724,
+        "avg_latency_s": 5.634450689951579,
+        "tokens_out": 22550
+      },
+      "Prealgebra": {
+        "count": 22,
+        "accuracy": 1.0,
+        "cost_usd": 0.072578,
+        "avg_latency_s": 2.8896586894989014,
+        "tokens_out": 6303
+      },
+      "Precalculus": {
+        "count": 28,
+        "accuracy": 1.0,
+        "cost_usd": 0.196814,
+        "avg_latency_s": 5.224834101540702,
+        "tokens_out": 18390
+      },
+      "Geometry": {
+        "count": 33,
+        "accuracy": 1.0,
+        "cost_usd": 0.228722,
+        "avg_latency_s": 5.198696122024998,
+        "tokens_out": 21089
+      },
+      "Algebra": {
+        "count": 20,
+        "accuracy": 1.0,
+        "cost_usd": 0.05383,
+        "avg_latency_s": 2.44372980594635,
+        "tokens_out": 4814
+      },
+      "Counting & Probability": {
+        "count": 28,
+        "accuracy": 1.0,
+        "cost_usd": 0.117934,
+        "avg_latency_s": 3.4370279737881253,
+        "tokens_out": 10678
+      },
+      "Number Theory": {
+        "count": 39,
+        "accuracy": 1.0,
+        "cost_usd": 0.157166,
+        "avg_latency_s": 3.2904760165092273,
+        "tokens_out": 14588
+      },
+      "algebra": {
+        "count": 3,
+        "accuracy": 1.0,
+        "cost_usd": 0.00248,
+        "avg_latency_s": 2.085724671681722,
+        "tokens_out": 192
+      },
+      "percentages": {
+        "count": 2,
+        "accuracy": 1.0,
+        "cost_usd": 0.0018419999999999999,
+        "avg_latency_s": 1.5228885412216187,
+        "tokens_out": 143
+      },
+      "proportionality": {
+        "count": 2,
+        "accuracy": 1.0,
+        "cost_usd": 0.002078,
+        "avg_latency_s": 1.480934500694275,
+        "tokens_out": 165
+      },
+      "geometry": {
+        "count": 3,
+        "accuracy": 1.0,
+        "cost_usd": 0.0023699999999999997,
+        "avg_latency_s": 1.6374772389729817,
+        "tokens_out": 175
+      },
+      "systems": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.001142,
+        "avg_latency_s": 1.628934621810913,
+        "tokens_out": 94
+      },
+      "economics": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.0009179999999999999,
+        "avg_latency_s": 1.6303486824035645,
+        "tokens_out": 70
+      },
+      "arithmetic": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.001642,
+        "avg_latency_s": 1.8445022106170654,
+        "tokens_out": 144
+      },
+      "interest": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.0013260000000000001,
+        "avg_latency_s": 1.1731081008911133,
+        "tokens_out": 110
+      },
+      "statistics": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.001374,
+        "avg_latency_s": 1.9068386554718018,
+        "tokens_out": 119
+      },
+      "fractions": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.0019399999999999999,
+        "avg_latency_s": 2.055711269378662,
+        "tokens_out": 173
+      },
+      "conversion": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.0008539999999999999,
+        "avg_latency_s": 1.55702805519104,
+        "tokens_out": 65
+      },
+      "speed": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.000676,
+        "avg_latency_s": 1.5534517765045166,
+        "tokens_out": 46
+      }
+    },
+    "opus": {
+      "word-problem": {
+        "count": 200,
+        "accuracy": 1.0,
+        "cost_usd": 0.861836,
+        "avg_latency_s": 2.6098267817497254,
+        "tokens_out": 36873
+      },
+      "Intermediate Algebra": {
+        "count": 30,
+        "accuracy": 1.0,
+        "cost_usd": 0.579448,
+        "avg_latency_s": 8.103846128781637,
+        "tokens_out": 27750
+      },
+      "Prealgebra": {
+        "count": 22,
+        "accuracy": 1.0,
+        "cost_usd": 0.174456,
+        "avg_latency_s": 4.211192748763344,
+        "tokens_out": 7768
+      },
+      "Precalculus": {
+        "count": 28,
+        "accuracy": 1.0,
+        "cost_usd": 0.522708,
+        "avg_latency_s": 7.681882406984057,
+        "tokens_out": 24844
+      },
+      "Algebra": {
+        "count": 20,
+        "accuracy": 1.0,
+        "cost_usd": 0.1764,
+        "avg_latency_s": 4.067690110206604,
+        "tokens_out": 8251
+      },
+      "Geometry": {
+        "count": 33,
+        "accuracy": 1.0,
+        "cost_usd": 0.5899840000000001,
+        "avg_latency_s": 7.688527244510072,
+        "tokens_out": 27716
+      },
+      "Number Theory": {
+        "count": 39,
+        "accuracy": 1.0,
+        "cost_usd": 0.425672,
+        "avg_latency_s": 5.52273065615923,
+        "tokens_out": 20155
+      },
+      "Counting & Probability": {
+        "count": 28,
+        "accuracy": 1.0,
+        "cost_usd": 0.324608,
+        "avg_latency_s": 5.305868991783687,
+        "tokens_out": 15115
+      },
+      "algebra": {
+        "count": 3,
+        "accuracy": 1.0,
+        "cost_usd": 0.00634,
+        "avg_latency_s": 1.9960589408874512,
+        "tokens_out": 261
+      },
+      "percentages": {
+        "count": 2,
+        "accuracy": 1.0,
+        "cost_usd": 0.0046040000000000005,
+        "avg_latency_s": 2.4915086030960083,
+        "tokens_out": 189
+      },
+      "proportionality": {
+        "count": 2,
+        "accuracy": 1.0,
+        "cost_usd": 0.004516,
+        "avg_latency_s": 1.8136297464370728,
+        "tokens_out": 183
+      },
+      "geometry": {
+        "count": 3,
+        "accuracy": 1.0,
+        "cost_usd": 0.00506,
+        "avg_latency_s": 2.00754451751709,
+        "tokens_out": 191
+      },
+      "systems": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.002584,
+        "avg_latency_s": 1.7730679512023926,
+        "tokens_out": 109
+      },
+      "economics": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.001736,
+        "avg_latency_s": 1.385293960571289,
+        "tokens_out": 65
+      },
+      "arithmetic": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.0024839999999999997,
+        "avg_latency_s": 1.9439823627471924,
+        "tokens_out": 104
+      },
+      "interest": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.002512,
+        "avg_latency_s": 1.8498401641845703,
+        "tokens_out": 103
+      },
+      "statistics": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.001688,
+        "avg_latency_s": 1.6571216583251953,
+        "tokens_out": 66
+      },
+      "conversion": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.001728,
+        "avg_latency_s": 1.4304132461547852,
+        "tokens_out": 66
+      },
+      "speed": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.001252,
+        "avg_latency_s": 1.3327240943908691,
+        "tokens_out": 41
+      },
+      "fractions": {
+        "count": 1,
+        "accuracy": 1.0,
+        "cost_usd": 0.0019199999999999998,
+        "avg_latency_s": 8.437467336654663,
+        "tokens_out": 75
+      }
+    }
+  },
+  "grade_methods": {
+    "exact": 1196,
+    "no-text": 5,
+    "numeric": 29,
+    "list": 1,
+    "symbolic": 11
+  },
+  "datasets_present": [
+    "gsm8k",
+    "math",
+    "own"
+  ]
+}

@@ -59,6 +59,52 @@ def test_grade_wrong():
     assert not v.correct and v.method == "none"
 
 
+# Regression cases taken from a MATH Level 5 run, where these correct answers
+# were marked wrong by the grader.
+def test_grade_text_wrapper_kept():
+    assert grade(r"\boxed{Friday}", r"\text{Friday}").correct
+    assert grade(r"\boxed{\text{Friday}}", r"\text{Friday}").correct
+    assert grade(r"\boxed{C, E}", r"\text{C,E}").correct
+
+
+def test_grade_units_dropped():
+    assert grade(r"\boxed{\dfrac{270}{7}}", r"\frac{270}7\text{ degrees}").correct
+
+
+def test_grade_frac_and_sqrt_shorthand():
+    assert grade(r"\boxed{\frac{\sqrt6}{6}}", r"\frac{\sqrt{6}}{6}").correct
+    assert grade(r"\boxed{2-\sqrt{2}+\frac{\pi}{4}}", r"\frac \pi4 + 2 - \sqrt2").correct
+
+
+def test_grade_unordered_list():
+    assert grade(r"\boxed{-112, 8}", "8,-112").correct
+    assert grade(r"\boxed{12 and 13}", r"12\text{ and }13").correct
+
+
+def test_grade_vector_as_tuple():
+    v = grade(r"\boxed{(1,4,3)}", r"\begin{pmatrix} 1 \\ 4 \\ 3 \end{pmatrix}")
+    assert v.correct
+    # tuples stay ordered
+    assert not grade(r"\boxed{(4,1,3)}", r"\begin{pmatrix} 1 \\ 4 \\ 3 \end{pmatrix}").correct
+
+
+def test_grade_base_subscript():
+    assert grade(r"\boxed{0.0011}", r"0.0011_{2}").correct
+
+
+def test_grade_text_units_in_answer():
+    # GSM8K-style answers where the model adds units in \text{}
+    assert grade(r"\boxed{45 \text{ miles}}", "45").correct
+    assert grade(r"\boxed{\$10{,}000 \text{ per day}}", "10000").correct
+    assert not grade(r"\boxed{\text{C}}", r"\text{E}").correct
+
+
+def test_grade_real_errors_stay_wrong():
+    assert not grade(r"\boxed{1043}", "1041").correct
+    assert not grade(r"\boxed{-1}", "-1,2").correct
+    assert not grade(r"\boxed{C}", r"\text{C,E}").correct
+
+
 if __name__ == "__main__":
     import traceback
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]

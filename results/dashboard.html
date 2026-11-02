@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Math LLM Evaluation — Results</title><style>
+:root{--bg:#f7f8fa;--card:#fff;--ink:#14213a;--muted:#5b6b86;--line:#e5e9f0;
+--accent:#145A96;--accent2:#14784B;--bar:#145A96;--barbg:#e8eef5}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1420;--card:#171d2b;--ink:#e8edf6;
+--muted:#9aa7bd;--line:#273146;--accent:#5aa0e0;--accent2:#5ac08a;--bar:#5aa0e0;--barbg:#223049}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);
+font:15px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;padding:24px 16px}
+.wrap{max-width:980px;margin:0 auto}h1{font-size:24px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 20px}
+.cards{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:14px 18px;flex:1;min-width:150px}
+.kpi .v{font-size:26px;font-weight:700}.kpi .l{color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:18px;margin-bottom:18px}h2{font-size:17px;margin:0 0 12px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px 10px;
+border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+th{color:var(--muted);font-weight:600;font-size:13px}td.num,th.num{text-align:right}
+.bar{position:relative;background:var(--barbg);border-radius:6px;height:22px;min-width:60px}
+.bar>span{position:absolute;left:0;top:0;bottom:0;background:var(--bar);border-radius:6px}
+.bar>b{position:absolute;right:6px;top:0;line-height:22px;font-size:12px;font-weight:600}
+.foot{color:var(--muted);font-size:12px;margin-top:8px}
+code{background:var(--barbg);padding:1px 5px;border-radius:4px}
+</style></head>
+<body><div class="wrap">
+<h1>Math LLM Evaluation</h1>
+<p class="sub">Accuracy, cost and latency of Claude models on GSM8K, MATH and a custom
+problem set. Grading: exact / numeric / symbolic (SymPy).</p>
+<div class="cards"><div class="kpi"><div class="v">1,254</div><div class="l">Problems evaluated</div></div><div class="kpi"><div class="v">99.0%</div><div class="l">Overall accuracy</div></div><div class="kpi"><div class="v">$5.28</div><div class="l">Total cost</div></div><div class="kpi"><div class="v">3</div><div class="l">Models</div></div></div>
+<div class="card"><h2>By model</h2><table><tr><th>Model</th><th>Accuracy</th><th class='num'>n</th><th class='num'>Cost</th><th class='num'>Latency</th></tr><tr><td><b>opus</b></td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>418</td><td class='num'>$3.69</td><td class='num'>4.3s</td></tr><tr><td><b>sonnet</b></td><td><div class="bar"><span style="width:99.5%"></span><b>99.5%</b></div></td><td class='num'>418</td><td class='num'>$1.47</td><td class='num'>3.0s</td></tr><tr><td><b>haiku</b></td><td><div class="bar"><span style="width:97.6%"></span><b>97.6%</b></div></td><td class='num'>418</td><td class='num'>$0.13</td><td class='num'>2.9s</td></tr></table>
+<p class="foot">Correct-grade methods — exact: <b>1196</b> · numeric: <b>29</b> · symbolic: <b>11</b> · no-text: <b>5</b> · list: <b>1</b></p></div>
+<div class="card"><h2>Accuracy by dataset</h2><table><tr><th>Model</th><th class='num'>gsm8k</th><th class='num'>math</th><th class='num'>own</th></tr><tr><td><b>haiku</b></td><td class='num'>96.5%<br><small>n=200</small></td><td class='num'>98.5%<br><small>n=200</small></td><td class='num'>100.0%<br><small>n=18</small></td></tr><tr><td><b>opus</b></td><td class='num'>100.0%<br><small>n=200</small></td><td class='num'>100.0%<br><small>n=200</small></td><td class='num'>100.0%<br><small>n=18</small></td></tr><tr><td><b>sonnet</b></td><td class='num'>99.0%<br><small>n=200</small></td><td class='num'>100.0%<br><small>n=200</small></td><td class='num'>100.0%<br><small>n=18</small></td></tr></table></div>
+<div class='card'><h2>Accuracy by topic — opus</h2><table><tr><th>Topic</th><th>Accuracy</th><th class='num'>n</th></tr><tr><td>word-problem</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>200</td></tr><tr><td>Intermediate Algebra</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>30</td></tr><tr><td>Prealgebra</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>22</td></tr><tr><td>Precalculus</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>28</td></tr><tr><td>Algebra</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>20</td></tr><tr><td>Geometry</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>33</td></tr><tr><td>Number Theory</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>39</td></tr><tr><td>Counting &amp; Probability</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>28</td></tr><tr><td>algebra</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>3</td></tr><tr><td>percentages</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>2</td></tr><tr><td>proportionality</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>2</td></tr><tr><td>geometry</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>3</td></tr><tr><td>systems</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>1</td></tr><tr><td>economics</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>1</td></tr><tr><td>arithmetic</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>1</td></tr><tr><td>interest</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>1</td></tr><tr><td>statistics</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>1</td></tr><tr><td>conversion</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>1</td></tr><tr><td>speed</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>1</td></tr><tr><td>fractions</td><td><div class="bar"><span style="width:100.0%"></span><b>100.0%</b></div></td><td class='num'>1</td></tr></table></div>
+<p class="foot">Generated by math-llm-eval-harness · prices used for the cost column are
+defined in <code>config/models.yaml</code> (verify against the official pricing page).</p>
+</div></body></html>
