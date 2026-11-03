@@ -12,6 +12,11 @@
 # output tokens; they also count toward `max_tokens`, so it is sized for thinking plus
 # the answer (a cap sized for the answer alone truncates replies).
 #
+# Every model runs at the same effort level (`--effort`, default medium).
+# `default_effort` is the level the API uses when a request sets none. It only labels
+# responses recorded before effort was set explicitly: those rows and their cache
+# entries count as runs at that level, so they are reused rather than paid for twice.
+#
 # Aliases (left column) are what you pass to `--models`, e.g. --models opus,haiku.
 
 opus:
@@ -20,6 +25,7 @@ opus:
   price_in_per_mtok: 4.00
   price_out_per_mtok: 20.00
   max_tokens: 16000
+  default_effort: medium
 
 sonnet:
   id: claude-sonnet-5-5
@@ -27,6 +33,7 @@ sonnet:
   price_in_per_mtok: 2.00
   price_out_per_mtok: 10.00
   max_tokens: 16000
+  default_effort: high
 
 haiku:
   id: claude-haiku-5-5
@@ -34,3 +41,4 @@ haiku:
   price_in_per_mtok: 0.10      # prompts <= 100K tokens; $0.50 above (never hit here)
   price_out_per_mtok: 0.50     # prompts <= 100K tokens; $2.50 above
   max_tokens: 16000
+  default_effort: medium

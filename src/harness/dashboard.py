@@ -47,6 +47,16 @@ def render(summary: dict) -> str:
     by_topic = summary.get("by_topic", {})
     gm = summary.get("grade_methods", {})
     datasets = summary.get("datasets_present", [])
+    effort = summary.get("effort", "any")
+    effort_note = (
+        "Effort levels: mixed (each model at the level it was run at)."
+        if effort == "any" else
+        f"Every model at the same effort level: <b>{html.escape(effort)}</b>."
+    )
+    excluded = summary.get("excluded_other_effort") or {}
+    if excluded:
+        listed = ", ".join(f"{html.escape(k)} ({n})" for k, n in excluded.items())
+        effort_note += f" Left out, run at another level: {listed}."
 
     # KPIs
     kpis = [
@@ -126,7 +136,7 @@ def render(summary: dict) -> str:
 <body><div class="wrap">
 <h1>Math LLM Evaluation</h1>
 <p class="sub">Accuracy, cost and latency of Claude models on GSM8K, MATH and a custom
-problem set. Grading: exact / numeric / symbolic (SymPy).</p>
+problem set. Grading: exact / numeric / symbolic (SymPy). {effort_note}</p>
 <div class="cards">{kpi_html}</div>
 <div class="card"><h2>By model</h2>{model_table}
 <p class="foot">Correct-grade methods — {gm_html}</p></div>

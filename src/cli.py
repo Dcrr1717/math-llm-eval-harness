@@ -35,6 +35,7 @@ def cmd_run(args):
             resume=not args.no_resume,
             samples=args.samples,
             max_tokens=args.max_tokens,
+            effort=args.effort,
         )
     except CostCapExceeded:
         sys.exit(2)  # non-zero so `&&` chains and scripts/run_all.sh stop here
@@ -42,17 +43,19 @@ def cmd_run(args):
 
 def cmd_report(args):
     from src.harness.report import build_summary, print_summary
-    print_summary(build_summary())
+    print_summary(build_summary(effort=args.effort))
 
 
 def cmd_dashboard(args):
     from src.harness.report import build_summary
     from src.harness.dashboard import build_dashboard
-    build_summary()
+    build_summary(effort=args.effort)
     build_dashboard()
 
 
 def main(argv=None):
+    from src.harness.models import DEFAULT_EFFORT, EFFORT_LEVELS
+
     p = argparse.ArgumentParser(prog="math-llm-eval")
     sub = p.add_subparsers(dest="cmd", required=True)
 
@@ -69,12 +72,19 @@ def main(argv=None):
                    help="independent answers per (problem, model)")
     r.add_argument("--max-tokens", type=int, default=None,
                    help="override max_tokens from config/models.yaml")
+    r.add_argument("--effort", choices=EFFORT_LEVELS, default=DEFAULT_EFFORT,
+                   help="effort level, the same for every model")
     r.set_defaults(func=cmd_run)
 
+    effort_help = "summarize only results run at this effort ('any' mixes levels)"
     rp = sub.add_parser("report", help="aggregate raw results")
+    rp.add_argument("--effort", choices=EFFORT_LEVELS + ("any",),
+                    default=DEFAULT_EFFORT, help=effort_help)
     rp.set_defaults(func=cmd_report)
 
     d = sub.add_parser("dashboard", help="build results/dashboard.html")
+    d.add_argument("--effort", choices=EFFORT_LEVELS + ("any",),
+                   default=DEFAULT_EFFORT, help=effort_help)
     d.set_defaults(func=cmd_dashboard)
 
     args = p.parse_args(argv)

@@ -3,7 +3,7 @@
 Features:
 - concurrency via a thread pool
 - on-disk response cache keyed by (model, prompt, params) -> free re-runs
-- resumable: already-recorded (uid, model) pairs are skipped
+- resumable: already-recorded (uid, model, sample, effort) results are skipped
 - a running cost estimate with an optional hard cap (--max-cost)
 
 Raw results are appended to results/raw/<dataset>.jsonl, one record per (problem, model).
@@ -22,7 +22,7 @@ from tqdm import tqdm
 
 from . import grading
 from .datasets import Problem, load_dataset_by_name
-from .models import ClaudeRunner, ModelSpec, load_model_specs
+from .models import DEFAULT_EFFORT, ClaudeRunner, ModelSpec, load_model_specs, row_effort
 
 ROOT = Path(__file__).resolve().parents[2]
 RAW_DIR = ROOT / "results" / "raw"
@@ -34,7 +34,8 @@ class CostCapExceeded(Exception):
 
 
 def _cache_key(model_id: str, problem: str, thinking: bool,
-               max_tokens: Optional[int] = None, sample: int = 0) -> str:
+               max_tokens: Optional[int] = None, sample: int = 0,
+               effort: Optional[str] = None) -> str:
     h = hashlib.sha256()
     key = f"{model_id}|{int(thinking)}|{problem}"
     # only non-default settings extend the key, so earlier caches stay valid
@@ -42,6 +43,8 @@ def _cache_key(model_id: str, problem: str, thinking: bool,
         key += f"|mt={max_tokens}"
     if sample:
         key += f"|s={sample}"
+    if effort is not None:
+        key += f"|eff={effort}"
     h.update(key.encode("utf-8"))
     return h.hexdigest()[:24]
 
@@ -63,14 +66,15 @@ def _save_cache(key: str, data: dict) -> None:
     )
 
 
-def _already_done(raw_path: Path) -> set:
+def _already_done(raw_path: Path, specs: Dict[str, ModelSpec]) -> set:
     done = set()
     if raw_path.exists():
         with open(raw_path, encoding="utf-8") as f:
             for line in f:
                 try:
                     r = json.loads(line)
-                    done.add((r["uid"], r["model_alias"], r.get("sample", 0)))
+                    done.add((r["uid"], r["model_alias"], r.get("sample", 0),
+                              row_effort(r, specs)))
                 except Exception:
                     continue
     return done
@@ -86,6 +90,7 @@ def run(
     resume: bool = True,
     samples: int = 1,
     max_tokens: Optional[int] = None,
+    effort: str = DEFAULT_EFFORT,
 ) -> Path:
     specs = load_model_specs()
     for a in model_aliases:
@@ -95,11 +100,11 @@ def run(
         specs = {a: replace(s, max_tokens=max_tokens) for a, s in specs.items()}
 
     problems = load_dataset_by_name(dataset, limit=limit)
-    runner = ClaudeRunner(thinking=thinking)
+    runner = ClaudeRunner(thinking=thinking, effort=effort)
 
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     raw_path = RAW_DIR / f"{dataset}.jsonl"
-    done = _already_done(raw_path) if resume else set()
+    done = _already_done(raw_path, specs) if resume else set()
 
     # `samples` independent answers per (problem, model), to measure run-to-run
     # variance; sampling parameters cannot be set, so repeats differ naturally
@@ -108,7 +113,7 @@ def run(
         for p in problems
         for a in model_aliases
         for k in range(samples)
-        if (p.uid, a, k) not in done
+        if (p.uid, a, k, effort) not in done
     ]
 
     lock = threading.Lock()
@@ -116,7 +121,10 @@ def run(
     writer = open(raw_path, "a", encoding="utf-8")
 
     def work(problem: Problem, spec: ModelSpec, sample: int) -> Optional[dict]:
-        key = _cache_key(spec.id, problem.problem, thinking, max_tokens, sample)
+        # a response made at the model's default effort before effort was sent
+        # explicitly is the same request, so it keeps its original cache key
+        key = _cache_key(spec.id, problem.problem, thinking, max_tokens, sample,
+                         None if effort == spec.default_effort else effort)
         cached = _load_cache(key)
         if cached is not None:
             comp = cached
@@ -135,6 +143,7 @@ def run(
             "model_alias": spec.alias,
             "model_id": spec.id,
             "sample": sample,
+            "effort": effort,
             "answer_ref": problem.answer,
             "answer_extracted": v.extracted,
             "correct": v.correct,
@@ -151,7 +160,7 @@ def run(
     print(
         f"[run] dataset={dataset} models={model_aliases} "
         f"problems={len(problems)} samples={samples} tasks={len(tasks)} "
-        f"thinking={thinking} concurrency={concurrency}"
+        f"effort={effort} thinking={thinking} concurrency={concurrency}"
     )
     try:
         with ThreadPoolExecutor(max_workers=concurrency) as ex:
