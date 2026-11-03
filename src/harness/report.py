@@ -6,6 +6,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List
 
+from .models import DEFAULT_EFFORT, load_model_specs, row_effort
+
 ROOT = Path(__file__).resolve().parents[2]
 RAW_DIR = ROOT / "results" / "raw"
 SUMMARY = ROOT / "results" / "summary.json"
@@ -42,8 +44,21 @@ def _agg(rows: List[dict]) -> dict:
     }
 
 
-def build_summary() -> dict:
+def build_summary(effort: str = DEFAULT_EFFORT) -> dict:
+    """Aggregate the rows run at `effort`, so every model is compared at the same
+    level; effort="any" keeps every row."""
     rows = _load_all()
+    excluded: Dict[str, int] = defaultdict(int)
+    if effort != "any":
+        specs = load_model_specs()
+        kept = []
+        for r in rows:
+            e = row_effort(r, specs)
+            if e == effort:
+                kept.append(r)
+            else:
+                excluded[f"{r['model_alias']}@{e}"] += 1
+        rows = kept
 
     by_model: Dict[str, List[dict]] = defaultdict(list)
     by_model_dataset: Dict[str, Dict[str, List[dict]]] = defaultdict(lambda: defaultdict(list))
@@ -59,6 +74,8 @@ def build_summary() -> dict:
             grade_methods[r["grade_method"]] += 1
 
     summary = {
+        "effort": effort,
+        "excluded_other_effort": dict(sorted(excluded.items())),
         "overall": _agg(rows),
         "models": {m: _agg(rs) for m, rs in by_model.items()},
         "by_dataset": {
@@ -79,8 +96,12 @@ def build_summary() -> dict:
 
 def print_summary(summary: dict) -> None:
     ov = summary["overall"]
-    print(f"\n== OVERALL ==  graded={ov['count']}  acc={ov['accuracy']:.1%}  "
-          f"cost=${ov['cost_usd']:.2f}")
+    print(f"\n== OVERALL ==  effort={summary.get('effort', 'any')}  graded={ov['count']}  "
+          f"acc={ov['accuracy']:.1%}  cost=${ov['cost_usd']:.2f}")
+    excluded = summary.get("excluded_other_effort") or {}
+    if excluded:
+        listed = ", ".join(f"{k} ({n})" for k, n in excluded.items())
+        print(f"   left out, run at another effort: {listed}")
     print("\n== BY MODEL ==")
     print(f"{'model':<10}{'n':>6}{'acc':>8}{'cost$':>9}{'lat_s':>8}")
     for m, a in sorted(summary["models"].items(), key=lambda kv: -kv[1]["accuracy"]):

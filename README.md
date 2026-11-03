@@ -48,12 +48,31 @@ MATH_LEVELS="Level 5" python -m src.cli run --dataset math --limit 200 --models 
 
 # held-out private set (see data/PRIVATE_SET.md): room for long thinking, 3 answers each
 python -m src.cli run --dataset private --models haiku --samples 3 --max-tokens 64000
+
+# every model runs at one effort level (default medium); pick another for all of them
+python -m src.cli run --dataset own --models opus,sonnet,haiku --effort high
+python -m src.cli report --effort high
 ```
 
 ## Results (2 Nov 2026)
 
 200 GSM8K test problems, 200 MATH **Level 5** problems (all 7 subjects, interleaved)
 and the 15-item custom set, each answered by the three models with adaptive thinking.
+
+**Effort levels.** These results (and the private-set ones below) were recorded before
+effort was set explicitly, so each model ran at its API default: Opus and Haiku at
+`medium`, Sonnet at `high`. The Opus and Haiku rows already count as `medium` runs.
+Until Sonnet is re-run at `medium`, `report` and `dashboard` (default `--effort medium`)
+leave Sonnet out and say so, and `--effort any` reproduces the tables below. Re-running
+the same sweeps completes the equal-effort comparison; only Sonnet is called:
+
+```bash
+python -m src.cli run --dataset own --models opus,sonnet,haiku --max-cost 5
+python -m src.cli run --dataset gsm8k --limit 200 --models opus,sonnet,haiku --max-cost 10
+MATH_LEVELS="Level 5" python -m src.cli run --dataset math --limit 200 --models opus,sonnet,haiku --max-cost 12
+python -m src.cli run --dataset private --models opus,sonnet,haiku --samples 3 --max-tokens 64000
+python -m src.cli report && python -m src.cli dashboard
+```
 
 | Model | Accuracy (418 items) | Total cost | Cost per correct answer |
 |---|---|---|---|
@@ -129,7 +148,10 @@ tests/                  grading unit tests
 
 - Adaptive thinking is **on by default** for the Claude 5.5 models (it cannot be
   disabled on Opus 5.5) and is billed as output tokens; `--thinking` only sends it
-  explicitly. Each model runs at its default effort level.
+  explicitly. Every model runs at the same effort level, `--effort` (default
+  `medium`, one of `low`, `medium`, `high`, `xhigh`, `max`), which is the main lever
+  on thinking length and so on cost. Results are cached, resumed and summarized per
+  effort level, so two levels never mix in one summary.
 - `--limit N` caps problems per dataset; start small.
 - Responses are cached by `(model, prompt, params)` hash, so re-runs are free.
 - Every run prints a running cost estimate and stops if `--max-cost` is exceeded:

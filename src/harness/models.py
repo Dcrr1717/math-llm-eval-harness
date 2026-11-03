@@ -4,7 +4,8 @@ Uses the official Anthropic SDK (Messages API). Calls are streamed and the final
 message is collected, so long thinking on hard problems does not time out. Sampling parameters (`temperature` etc.) are not sent:
 API version 2026-10-21 rejects them. Adaptive thinking is on by default for the
 Claude 5.5 models (and cannot be disabled on Opus 5.5); `thinking=True` only sends it
-explicitly.
+explicitly. Every request sets the same effort level (`output_config.effort`), so the
+models are compared at equal effort rather than at their differing API defaults.
 
 NOTE: model ids and prices live in config/models.yaml. Verify prices against the
 official pricing page — token counts here are exact (from response.usage).
@@ -27,6 +28,9 @@ SYSTEM_PROMPT = (
     "answer inside \\boxed{}."
 )
 
+EFFORT_LEVELS = ("low", "medium", "high", "xhigh", "max")
+DEFAULT_EFFORT = "medium"
+
 
 @dataclass
 class ModelSpec:
@@ -36,6 +40,7 @@ class ModelSpec:
     price_in: float    # USD per 1M input tokens
     price_out: float   # USD per 1M output tokens
     max_tokens: int
+    default_effort: str = "high"  # the API's level when a request sets none
 
 
 @dataclass
@@ -61,18 +66,29 @@ def load_model_specs() -> Dict[str, ModelSpec]:
             price_in=float(d["price_in_per_mtok"]),
             price_out=float(d["price_out_per_mtok"]),
             max_tokens=int(d.get("max_tokens", 4096)),
+            default_effort=d.get("default_effort", "high"),
         )
     return specs
+
+
+def row_effort(row: dict, specs: Dict[str, ModelSpec]) -> Optional[str]:
+    """Effort a raw result row was run at. Rows recorded before effort was set
+    explicitly carry none and ran at their model's default level."""
+    if row.get("effort"):
+        return row["effort"]
+    spec = specs.get(row.get("model_alias"))
+    return spec.default_effort if spec else None
 
 
 class ClaudeRunner:
     """Thin wrapper around the Anthropic client for one completion at a time."""
 
-    def __init__(self, thinking: bool = False):
+    def __init__(self, thinking: bool = False, effort: str = DEFAULT_EFFORT):
         from anthropic import Anthropic  # imported lazily so tests don't need a key
 
         self.client = Anthropic()  # reads ANTHROPIC_API_KEY from env
         self.thinking = thinking
+        self.effort = effort
 
     def complete(self, spec: ModelSpec, problem: str) -> Completion:
         kwargs = dict(
@@ -80,6 +96,7 @@ class ClaudeRunner:
             max_tokens=spec.max_tokens,
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": problem}],
+            output_config={"effort": self.effort},
         )
         if self.thinking:
             # adaptive thinking (Claude 4.6+); already the default on the 5.5 models
